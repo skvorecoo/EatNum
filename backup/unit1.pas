@@ -23,10 +23,12 @@ type
     Label3: TLabel;
     Label4: TLabel;
     Timer1: TTimer;
+    Timer2: TTimer;
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure Timer1Timer(Sender: TObject);
+    procedure Timer2Timer(Sender: TObject);
   private
 
   public
@@ -37,7 +39,7 @@ var
   Form1: TForm1;
   path: String;
   i, j, x, win, score: integer;
-  PicMonster, Buf: TBitmap;
+  PicMonster, Buf, Wallpaper: TBitmap;
   Monster: TMonster;
   nums: array[0..9, 0..4] of integer;
   correct_nums: array[1..10] of integer;
@@ -64,8 +66,13 @@ begin
   Monster.X:=0;
   Monster.Y:=0;
   Monster.HP:=3;
-  PicMonster.Transparent := True;
-  PicMonster.TransparentColor := clWhite;
+  PicMonster.Transparent:=True;
+  PicMonster.TransparentColor:=clWhite;
+
+  Wallpaper:=TBitmap.Create;
+  Wallpaper.LoadFromFile(path+'\imgs\Wallpaper.bmp');
+
+  Form1.Canvas.Draw(0, 0, Wallpaper);
 
 end;
 
@@ -115,7 +122,9 @@ begin
          for i:=0 to 9 do
            for j:=0 to 4 do
              begin
-               if nums[i,j]<>-1 then TextOut(100+118*i, 100+124*j, inttostr(nums[i,j]));
+               if nums[i,j]<>-1 then
+                 if (i=Monster.X) and (j=Monster.Y) then TextOut(130+118*i, 120+124*j, inttostr(nums[i,j]))
+                 else TextOut(100+118*i, 100+124*j, inttostr(nums[i,j]));
              end;
          Draw(Monster.X*118+50, Monster.Y*124+50, PicMonster);
          TextOut(1192, 8, Form1.Label3.Caption);
@@ -124,8 +133,20 @@ begin
   Form1.Canvas.Draw(0,0, Buf);
 end;
 
+procedure TForm1.Timer2Timer(Sender: TObject);
+begin
+  Form1.Canvas.Draw(0, 0, Wallpaper);
+  Form1.Canvas.TextOut(600, 9, 'X mod ');
+  Form1.Canvas.TextOut(672, 9, ' = 0');
+  Form1.Canvas.TextOut(1192, 8, Form1.Label3.Caption);
+  Form1.Timer2.Enabled:=False;
+end;
+
 procedure TForm1.Button1Click(Sender: TObject);
 begin
+  if Form1.Edit1.Caption='' then ShowMessage('Поле не должно быть пустым!') else
+  if strtoint(Form1.Edit1.Caption) > 1 then
+  begin
   for i:=1 to 10 do
     begin
       correct_nums[i]:=StrToInt(Form1.Edit1.Text) * i;
@@ -147,6 +168,9 @@ begin
   Form1.Timer1.Enabled:=True;
   Form1.Edit1.Enabled:=False;
   Form1.Edit1.Visible:=False;
+  end
+  else
+  ShowMessage('Число должно быть больше 0!');
 end;
 
 procedure Equation;
@@ -156,6 +180,7 @@ begin
     begin
     Brush.Color:=clWhite;
     Rectangle(0, 0, Form1.Width, Form1.Height);
+    Draw(0, 0, Wallpaper);
     TextOut(600, 9, 'X mod ');
     TextOut(672, 9, ' = 0');
     TextOut(1192, 8, Form1.Label3.Caption);
