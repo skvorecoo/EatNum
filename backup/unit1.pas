@@ -36,7 +36,7 @@ type
 var
   Form1: TForm1;
   path: String;
-  i, j, x, win, score, ToInt, code: integer;
+  i, j, x, win, score: integer;
   PicMonster, Buf: TBitmap;
   Monster: TMonster;
   nums: array[0..9, 0..4] of integer;

@@ -115,7 +115,9 @@ begin
          for i:=0 to 9 do
            for j:=0 to 4 do
              begin
-               if nums[i,j]<>-1 then TextOut(100+118*i, 100+124*j, inttostr(nums[i,j]));
+               if nums[i,j]<>-1 then
+                 if (i=Monster.X) and (j=Monster.Y) then TextOut(130+118*i, 120+124*j, inttostr(nums[i,j]))
+                 else TextOut(100+118*i, 100+124*j, inttostr(nums[i,j]));
              end;
          Draw(Monster.X*118+50, Monster.Y*124+50, PicMonster);
          TextOut(1192, 8, Form1.Label3.Caption);
