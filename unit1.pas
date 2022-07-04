@@ -5,7 +5,7 @@ unit Unit1;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, LCLType;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, LCLType, crt;
 
 type
 
@@ -43,6 +43,7 @@ var
   Monster: TMonster;
   nums: array[0..9, 0..4] of integer;
   correct_nums: array[1..10] of integer;
+  AnimMonster: array[1..3] of TBitmap;
 
 implementation
 
@@ -72,6 +73,14 @@ begin
   Wallpaper:=TBitmap.Create;
   Wallpaper.LoadFromFile(path+'\imgs\Wallpaper.bmp');
 
+  for i:=0 to 2 do
+    begin
+      AnimMonster[i]:=TBitmap.Create;
+      AnimMonster[i].LoadFromFile(path+'\imgs\Monster_anim[' + inttostr(i) + '].bmp');
+      AnimMonster[i].Transparent:=True;
+      AnimMonster[i].TransparentColor:=clWhite;
+    end;
+
   Form1.Canvas.Draw(0, 0, Wallpaper);
 
 end;
@@ -86,6 +95,14 @@ begin
   if (Key=VK_Space) then
     if nums[Monster.X, Monster.Y] mod StrToInt(Form1.Edit1.Text) = 0 then
       begin
+        for i:=0 to 6 do
+          begin
+            Buf.Canvas.Pen.Width:=0;
+            Buf.Canvas.Rectangle(Monster.X*118+54, Monster.Y*124+54, Monster.X*118+164, Monster.Y*124+170);
+            Buf.Canvas.Draw(Monster.X*118+50, Monster.Y*124+50, AnimMonster[(i mod 2)]);
+            Form1.Canvas.Draw(0, 0, Buf);
+            Delay(100);
+          end;
         score+=1;
         Form1.Label3.Caption:='Score = ' + inttostr(Score);
         nums[Monster.X, Monster.Y]:=-1;
@@ -109,6 +126,7 @@ end;
 procedure TForm1.Timer1Timer(Sender: TObject);
 begin
   Buf.Canvas.Brush.Color:=clWhite;
+  Buf.Canvas.Pen.Width:=0;
   Buf.Canvas.Rectangle(0, 0, Form1.Width, Form1.Height);
   with Buf.Canvas do
        begin
@@ -129,7 +147,7 @@ begin
                  else TextOut(100+118*i, 100+124*j, inttostr(nums[i,j]));
              end;
          Draw(Monster.X*118+50, Monster.Y*124+50, PicMonster);
-         TextOut(1192, 8, Form1.Label3.Caption);
+         TextOut(1100, 8, Form1.Label3.Caption);
          TextOut(25, 8, 'HP = ' + inttostr(Monster.HP));
        end;
   Form1.Canvas.Draw(0,0, Buf);
@@ -140,7 +158,7 @@ begin
   Form1.Canvas.Draw(0, 0, Wallpaper);
   Form1.Canvas.TextOut(600, 9, 'X mod ');
   Form1.Canvas.TextOut(672, 9, ' = 0');
-  Form1.Canvas.TextOut(1192, 8, Form1.Label3.Caption);
+  Form1.Canvas.TextOut(1100, 8, Form1.Label3.Caption);
   Form1.Timer2.Enabled:=False;
 end;
 
@@ -184,7 +202,7 @@ begin
     Draw(0, 0, Wallpaper);
     TextOut(600, 9, 'X mod ');
     TextOut(672, 9, ' = 0');
-    TextOut(1192, 8, Form1.Label3.Caption);
+    TextOut(1100, 8, 'Last ' + Form1.Label3.Caption);
     end;
 end;
 
@@ -203,4 +221,3 @@ begin
 end;
 
 end.
-
